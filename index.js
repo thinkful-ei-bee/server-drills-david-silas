@@ -25,13 +25,33 @@ app.get('/cipher', (req, res) => {
   for(let i = 0; i < text.length; i++) {
     const letter = text[i].toUpperCase().charCodeAt(0);
     if(letter < 65 || letter > 90) {
-      encrypted += String.fromCharCode(letter)
+      encrypted += String.fromCharCode(letter);
     } else {
       encrypted += String.fromCharCode(((letter + shift - 65) % 26) + 65);
     }
   }
 
   res.send(encrypted);
+});
+
+app.get('/lotto', (req, res) => {
+  const arr = req.query.numbers;
+  const numbers = arr.map(str => Number(str));
+  const ranNumbers = [0, 0, 0, 0, 0, 0].map(() => Math.floor(Math.random() * 20) + 1);
+  const intersection = [...numbers].filter(num => ranNumbers.indexOf(num) !== -1 );
+
+  const numStr = `Your numbers were ${numbers} and random numbers were ${ranNumbers}`;
+
+  if (intersection.length < 4) {
+    res.send('Sorry, you lose' + numStr);
+  } else if (intersection.length === 4) {
+    res.send('Congratulations, you win a free ticket' + numStr);
+  } else if (intersection.length === 5) {
+    res.send('Congratulations! You win $100!');
+  } else if (intersection.length === 6) {
+    res.send('Wow! Unbelievable! You could have won the mega millions!');
+  }
+
 });
 
 app.listen(8000, () => {
